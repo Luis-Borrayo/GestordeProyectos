@@ -1,10 +1,11 @@
-package com.luisborrayo.adminproyectosytareas.Services;
+package com.luisborrayo.gestordeproyectos.services;
 
-import com.luisborrayo.adminproyectosytareas.Repositories.ProjectRepository;
-import com.luisborrayo.adminproyectosytareas.models.Project;
-import java.util.List;
+import com.luisborrayo.gestordeproyectos.repositories.ProjectRepository;
+import com.luisborrayo.gestordeproyectos.models.Project;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+
+import java.util.List;
 
 @ApplicationScoped
 public class ProjectService {

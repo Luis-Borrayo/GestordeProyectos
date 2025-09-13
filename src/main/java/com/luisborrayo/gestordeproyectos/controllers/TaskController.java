@@ -1,7 +1,7 @@
-package com.luisborrayo.adminproyectosytareas.controllers;
+package com.luisborrayo.gestordeproyectos.controllers;
 
-import com.luisborrayo.adminproyectosytareas.Services.TaskService;
-import com.luisborrayo.adminproyectosytareas.models.Task;
+import com.luisborrayo.gestordeproyectos.services.TaskService;
+import com.luisborrayo.gestordeproyectos.models.Task;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
@@ -55,25 +55,27 @@ public class TaskController implements Serializable {
     }
 
     public void saveTask() {
-        if (selectedTask == null) {
-            return;
-        }
+        if (selectedTask == null) return;
+
         if (selectedTask.getTitle() == null || selectedTask.getTitle().isBlank()) {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "El título es obligatorio", null));
             return;
         }
+
         if (selectedTask.getDueDate() != null && selectedTask.getDueDate().isBefore(LocalDate.now())) {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "La fecha debe ser hoy o futura", null));
             return;
         }
-        // Asegurar que la tarea tenga projectId
+
         if (selectedTask.getProjectId() == null && projectId != null) {
             selectedTask.setProjectId(projectId);
         }
+
         tasksService.save(selectedTask);
         loadTasks();
+
         FacesContext.getCurrentInstance().addMessage(null,
                 new FacesMessage(FacesMessage.SEVERITY_INFO, "Tarea guardada correctamente", null));
     }
@@ -101,9 +103,9 @@ public class TaskController implements Serializable {
 
     public Task getSelectedTask() { return selectedTask; }
     public void setSelectedTask(Task selectedTask) { this.selectedTask = selectedTask; }
+
     public Long getProjectId() { return projectId; }
 
-    // cuando cambie el projectId, recargamos tasks
     public void setProjectId(Long projectId) {
         this.projectId = projectId;
         loadTasks();

@@ -1,11 +1,12 @@
-package com.luisborrayo.adminproyectosytareas.controllers;
+package com.luisborrayo.gestordeproyectos.controllers;
 
-import com.luisborrayo.adminproyectosytareas.Services.ProjectService;
-import com.luisborrayo.adminproyectosytareas.models.Project;
+import com.luisborrayo.gestordeproyectos.services.ProjectService;
+import com.luisborrayo.gestordeproyectos.models.Project;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import org.primefaces.event.SelectEvent;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -21,7 +22,7 @@ public class ProjectController implements Serializable {
     @Inject
     private TaskController taskController;
 
-    private Project slectedProject;
+    private Project selectedProject; // corregido
     private List<Project> projects;
 
     @PostConstruct
@@ -30,24 +31,24 @@ public class ProjectController implements Serializable {
     }
 
     public void crearNuevoProyecto() {
-        slectedProject = new Project();
-        slectedProject.setCreatedAt(LocalDateTime.now());
+        selectedProject = new Project();
+        selectedProject.setCreatedAt(LocalDateTime.now());
     }
 
     public void guardarPro() {
-        if (slectedProject.getName() == null || slectedProject.getName().trim().isEmpty()
-                || slectedProject.getOwner() == null || slectedProject.getOwner().trim().isEmpty()) {
+        if (selectedProject.getName() == null || selectedProject.getName().trim().isEmpty()
+                || selectedProject.getOwner() == null || selectedProject.getOwner().trim().isEmpty()) {
             return;
         }
-        if (!serviceproject.nombreunico(slectedProject.getName(), slectedProject.getId())) {
+        if (!serviceproject.nombreunico(selectedProject.getName(), selectedProject.getId())) {
             return;
         }
-        serviceproject.guardarProyecto(slectedProject);
+        serviceproject.guardarProyecto(selectedProject);
         projects = serviceproject.listarProject();
     }
 
     public void editarProyecto(Project project) {
-        slectedProject = project;
+        selectedProject = project;
         if (project != null && project.getId() != null) {
             taskController.setProjectId(project.getId());
         }
@@ -58,12 +59,19 @@ public class ProjectController implements Serializable {
         projects = serviceproject.listarProject();
     }
 
-    public Project getSlectedProject() {
-        return slectedProject;
+    public void proyectoSeleccionado(SelectEvent<Project> event) {
+        this.selectedProject = event.getObject();
+        if (selectedProject != null) {
+            taskController.setProjectId(selectedProject.getId());
+        }
     }
 
-    public void setSlectedProject(Project slectedProject) {
-        this.slectedProject = slectedProject;
+    public Project getSelectedProject() {
+        return selectedProject;
+    }
+
+    public void setSelectedProject(Project selectedProject) {
+        this.selectedProject = selectedProject;
     }
 
     public List<Project> getProjects() {

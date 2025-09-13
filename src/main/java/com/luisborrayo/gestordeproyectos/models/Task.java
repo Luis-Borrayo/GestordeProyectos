@@ -1,4 +1,4 @@
-package com.luisborrayo.adminproyectosytareas.models;
+package com.luisborrayo.gestordeproyectos.models;
 
 import java.io.Serializable;
 import java.time.LocalDate;

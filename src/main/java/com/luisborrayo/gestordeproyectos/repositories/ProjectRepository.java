@@ -1,11 +1,14 @@
-package com.luisborrayo.adminproyectosytareas.Repositories;
+package com.luisborrayo.gestordeproyectos.repositories;
 
-import com.luisborrayo.adminproyectosytareas.models.Project;
+import com.luisborrayo.gestordeproyectos.models.Project;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 @ApplicationScoped

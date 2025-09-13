@@ -1,7 +1,8 @@
-package com.luisborrayo.adminproyectosytareas.Services;
+package com.luisborrayo.gestordeproyectos.services;
 
-import com.luisborrayo.adminproyectosytareas.Repositories.TaskRepository;
-import com.luisborrayo.adminproyectosytareas.models.Task;
+import com.luisborrayo.gestordeproyectos.repositories.TaskRepository;
+import com.luisborrayo.gestordeproyectos.models.Task;
+import com.luisborrayo.gestordeproyectos.repositories.TaskRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 

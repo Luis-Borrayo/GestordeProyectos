@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>Proyectos y Tareas</title>
+</h:head>
+
+<h:body>
+
+    <p:growl id="growl" showDetail="true" life="3000" />
+
+    <div class="p-d-flex p-gap-2" style="height:100vh; padding:10px; box-sizing:border-box;">
+
+        <div class="p-shadow-2 p-p-2" style="flex: 1 1 35%; overflow:auto;">
+            <h3>Proyectos</h3>
+            <h:form id="projectTableForm">
+                <p:messages id="msgProjectForm" autoUpdate="true" />
+
+                <p:commandButton value="Nuevo Proyecto" icon="pi pi-plus"
+                                 styleClass="my-btn"
+                                 style="margin-bottom:10px;"
+                                 oncomplete="PF('projectDialog').show()"
+                                 actionListener="#{projectController.crearNuevoProyecto}"
+                                 update=":projectForm :projectTableForm:projectTable :growl" />
+
+                <p:dataTable id="projectTable" var="p" value="#{projectController.projects}"
+                             rowKey="#{p.id}" selectionMode="single"
+                             selection="#{projectController.selectedProject}"
+                             style="margin-top:10px;">
+
+                    <p:ajax event="rowSelect"
+                            listener="#{projectController.proyectoSeleccionado}"
+                            update=":taskTableForm:taskTable :growl" />
+
+                    <p:column headerText="Nombre">
+                        <h:outputText value="#{p.name}" />
+                    </p:column>
+                    <p:column headerText="Propietario">
+                        <h:outputText value="#{p.owner}" />
+                    </p:column>
+                    <p:column headerText="Acciones">
+                        <p:commandButton icon="pi pi-pencil" title="Editar"
+                                         styleClass="my-btn"
+                                         oncomplete="PF('projectDialog').show()"
+                                         actionListener="#{projectController.editarProyecto(p)}"
+                                         update=":projectForm :projectTableForm:projectTable :growl" />
+
+                        <p:commandButton icon="pi pi-trash" title="Eliminar"
+                                         styleClass="my-btn my-btn-danger"
+                                         actionListener="#{projectController.eliminarProyecto(p)}"
+                                         update=":projectTableForm:projectTable :taskTableForm:taskTable :growl"
+                                         process="@this"
+                                         onclick="return confirm('¿Seguro que desea eliminar este proyecto?');" />
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </div>
+
+        <div class="p-shadow-2 p-p-2" style="flex: 1 1 65%; overflow:auto;">
+            <h3>Tareas del Proyecto</h3>
+            <h:form id="taskTableForm">
+                <p:messages id="msgTaskForm" autoUpdate="true" />
+
+                <p:commandButton value="Nueva Tarea" icon="pi pi-plus"
+                                 styleClass="my-btn"
+                                 style="margin-bottom:10px;"
+                                 oncomplete="PF('taskDialog').show()"
+                                 actionListener="#{taskController.openNewTask}"
+                                 update=":taskForm :taskTableForm:taskTable :growl" />
+
+                <p:dataTable id="taskTable" var="t" value="#{taskController.tasks}"
+                             rowKey="#{t.id}" style="margin-top:10px;">
+                    <p:column headerText="Título">
+                        <h:outputText value="#{t.title}" />
+                    </p:column>
+                    <p:column headerText="Prioridad">
+                        <h:outputText value="#{t.priority}" />
+                    </p:column>
+                    <p:column headerText="Fecha Vencimiento">
+                        <h:outputText value="#{t.dueDate}" />
+                    </p:column>
+                    <p:column headerText="Hecho">
+                        <p:selectBooleanCheckbox value="#{t.done}" ajax="true"
+                                                 listener="#{taskController.toggleDone(t)}"
+                                                 update=":growl :taskTableForm:taskTable" />
+                    </p:column>
+                    <p:column headerText="Notas">
+                        <h:outputText value="#{t.notes}" />
+                    </p:column>
+                    <p:column headerText="Acciones">
+                        <p:commandButton icon="pi pi-pencil" title="Editar"
+                                         styleClass="my-btn"
+                                         oncomplete="PF('taskDialog').show()"
+                                         actionListener="#{taskController.selectTask(t)}"
+                                         update=":taskForm :taskTableForm:taskTable :growl" />
+                        <p:commandButton icon="pi pi-trash" title="Eliminar"
+                                         styleClass="my-btn my-btn-danger"
+                                         actionListener="#{taskController.delete(t)}"
+                                         update=":taskTableForm:taskTable :growl"
+                                         process="@this"
+                                         onclick="return confirm('¿Seguro que desea eliminar esta tarea?');" />
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </div>
+
+    </div>
+
+    <p:dialog header="Proyecto" widgetVar="projectDialog" modal="true" resizable="false">
+        <h:form id="projectForm">
+            <p:messages id="msgProject" autoUpdate="true" />
+
+            <p:panelGrid columns="2" columnClasses="label,value" style="margin-bottom:10px;">
+                <h:outputLabel for="name" value="Nombre:" />
+                <p:inputText id="name" value="#{projectController.selectedProject.name}" required="true" />
+
+                <h:outputLabel for="owner" value="Propietario:" />
+                <p:inputText id="owner" value="#{projectController.selectedProject.owner}" required="true" />
+            </p:panelGrid>
+
+            <p:commandButton value="Guardar" actionListener="#{projectController.guardarPro}"
+                             styleClass="my-btn"
+                             update=":projectTableForm:projectTable :projectForm :growl"
+                             oncomplete="PF('projectDialog').hide()" />
+            <p:commandButton value="Cancelar" type="button"
+                             styleClass="my-btn"
+                             onclick="PF('projectDialog').hide()" />
+        </h:form>
+    </p:dialog>
+
+    <p:dialog header="Tarea" widgetVar="taskDialog" modal="true" resizable="false">
+        <h:form id="taskForm">
+            <p:messages id="msgTask" autoUpdate="true" />
+
+            <p:panelGrid columns="2" columnClasses="label,value" style="margin-bottom:10px;">
+                <h:outputLabel for="title" value="Título:" />
+                <p:inputText id="title" value="#{taskController.selectedTask.title}" required="true" />
+
+                <h:outputLabel for="priority" value="Prioridad:" />
+                <p:selectOneMenu id="priority" value="#{taskController.selectedTask.priority}" required="true">
+                    <f:selectItems value="#{taskController.priorityEnum}" var="p"
+                                   itemLabel="#{p}" itemValue="#{p}" />
+                </p:selectOneMenu>
+
+                <h:outputLabel for="dueDate" value="Fecha Vencimiento:" />
+                <p:calendar id="dueDate" value="#{taskController.selectedTask.dueDate}" pattern="yyyy-MM-dd" showIcon="true" />
+
+                <h:outputLabel for="notes" value="Notas:" />
+                <p:inputTextarea id="notes" value="#{taskController.selectedTask.notes}" autoResize="true" />
+            </p:panelGrid>
+
+            <p:commandButton value="Guardar" actionListener="#{taskController.saveTask}"
+                             styleClass="my-btn"
+                             update=":taskTableForm:taskTable :taskForm :growl"
+                             oncomplete="PF('taskDialog').hide()" />
+            <p:commandButton value="Cancelar" type="button"
+                             styleClass="my-btn"
+                             onclick="PF('taskDialog').hide()" />
+        </h:form>
+    </p:dialog>
+
+    <style>
+        .my-btn {
+            background: #222 !important;
+            border: 1px solid #222 !important;
+            color: #fff !important;
+            box-shadow: none !important;
+        }
+        .my-btn:hover, .my-btn.ui-state-hover {
+            background: #444 !important;
+            border-color: #444 !important;
+        }
+        .my-btn-danger {
+            background: #c0392b !important;
+            border-color: #c0392b !important;
+            color: #fff !important;
+        }
+        .my-btn-danger:hover {
+            background: #e74c3c !important;
+            border-color: #e74c3c !important;
+        }
+    </style>
+
+</h:body>
+</html>

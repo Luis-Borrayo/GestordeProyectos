@@ -1,6 +1,6 @@
-package com.luisborrayo.adminproyectosytareas.Repositories;
+package com.luisborrayo.gestordeproyectos.repositories;
 
-import com.luisborrayo.adminproyectosytareas.models.Task;
+import com.luisborrayo.gestordeproyectos.models.Task;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 
